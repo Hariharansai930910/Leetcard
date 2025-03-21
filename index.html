@@ -1,563 +1,396 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeetCode Flashcards</title>
-    <style>
-        /* Global styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            padding: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        /* Theme colors */
-        body.light-theme {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        body.dark-theme {
-            background-color: #1e1e1e;
-            color: #f5f5f5;
-        }
-
-        body.blue-theme {
-            background-color: #e6f7ff;
-            color: #0a3055;
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        /* Theme selector */
-        .theme-selector {
-            display: flex;
-            gap: 10px;
-        }
-
-        .theme-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid #ccc;
-            transition: transform 0.2s;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .light-btn {
-            background-color: #f5f5f5;
-        }
-
-        .dark-btn {
-            background-color: #1e1e1e;
-        }
-
-        .blue-btn {
-            background-color: #e6f7ff;
-        }
-
-        /* Navigation controls */
-        .card-navigation {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .nav-button {
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .nav-button:hover {
-            background-color: #357abd;
-        }
-
-        .nav-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        .card-counter {
-            margin: 0 15px;
-            font-weight: bold;
-        }
-
-        /* Flashcard container */
-        .flashcard-container {
-            perspective: 1000px;
-            width: 500px;
-            height: 500px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        /* Flashcard */
-        .flashcard {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            border-radius: 10px;
-        }
-
-        .flashcard.is-flipped {
-            transform: rotateY(180deg);
-        }
-
-        /* Card sides */
-        .card-side {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            overflow: hidden;
-            border-radius: 10px;
-        }
-
-        .card-front {
-            background-color: white;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-back {
-            background-color: #ffd700;
-            color: #333;
-            transform: rotateY(180deg);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Scrollable content */
-        .content-scrollable {
-            overflow-y: auto;
-            padding: 20px;
-            flex-grow: 1;
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            background-color: #f0f0f0;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            flex-grow: 1;
-            text-align: center;
-            font-weight: bold;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab.active {
-            background-color: white;
-            border-bottom: 3px solid #ffd700;
-        }
-
-        /* Tab content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Code styling */
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-        }
-
-        /* Dark theme overrides */
-        body.dark-theme .card-front {
-            background-color: #2d2d2d;
-            color: #f5f5f5;
-        }
-
-        body.dark-theme .tabs {
-            background-color: #3d3d3d;
-        }
-
-        body.dark-theme .tab.active {
-            background-color: #2d2d2d;
-        }
-
-        body.dark-theme pre {
-            background-color: #3d3d3d;
-            color: #f5f5f5;
-        }
-
-        /* Blue theme overrides */
-        body.blue-theme .card-front {
-            background-color: #f0f8ff;
-            color: #0a3055;
-        }
-
-        body.blue-theme .tabs {
-            background-color: #d6eaff;
-        }
-
-        body.blue-theme .tab.active {
-            background-color: #f0f8ff;
-            border-bottom: 3px solid #0078d7;
-        }
-
-        body.blue-theme .card-back {
-            background-color: #b3e0ff;
-            color: #0a3055;
-        }
-
-        body.blue-theme pre {
-            background-color: #e6f7ff;
-            color: #0a3055;
-        }
-
-        /* Card title */
-        .card-title {
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        /* Complexity badges */
-        .complexity {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-right: 8px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        .time {
-            background-color: #e6f7ff;
-            color: #0078d7;
-        }
-
-        .space {
-            background-color: #fff4e6;
-            color: #ff9500;
-        }
-
-        /* Dark theme complexity badges */
-        body.dark-theme .complexity.time {
-            background-color: #003366;
-            color: #4db8ff;
-        }
-
-        body.dark-theme .complexity.space {
-            background-color: #663300;
-            color: #ffc266;
-        }
-
-        /* Method badge */
-        .method-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #ffd700;
-            color: #333;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-
-        body.dark-theme .method-badge {
-            background-color: #ffd700;
-            color: #333;
-        }
-
-        body.blue-theme .method-badge {
-            background-color: #0078d7;
-            color: white;
-        }
-
-        /* Category badge */
-        .category-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            background-color: #4a90e2;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        body.dark-theme .category-badge {
-            background-color: #357abd;
-        }
-
-        body.blue-theme .category-badge {
-            background-color: #0069be;
-            color: white;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px 0;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-    </style>
-</head>
-<body class="light-theme">
-    <div class="container">
-        <header>
-            <div class="logo">LeetCode Flashcards</div>
-            <div class="theme-selector">
-                <div class="theme-btn light-btn" title="Light Theme"></div>
-                <div class="theme-btn dark-btn" title="Dark Theme"></div>
-                <div class="theme-btn blue-btn" title="Blue Theme"></div>
-            </div>
-        </header>
-
-        <div class="card-navigation">
-            <button class="nav-button" id="prev-button" disabled>Previous</button>
-            <div class="card-counter">Card <span id="current-card">1</span> of <span id="total-cards">10</span></div>
-            <button class="nav-button" id="next-button">Next</button>
-        </div>
-
-        <div class="flashcard-container">
-            <div class="flashcard">
-                <!-- Front side with tabs -->
-                <div class="card-side card-front">
-                    <div class="tabs">
-                        <div class="tab active" data-tab="question">Question</div>
-                        <div class="tab" data-tab="hint">Hint</div>
-                        <div class="tab" data-tab="blueprint">Blueprint</div>
-                        <div class="tab" data-tab="code">Code</div>
-                    </div>
-                    <div class="category-badge" id="category-badge">Arrays & Hashing</div>
-                    <div class="content-scrollable">
-                        <!-- Dynamic content for tabs will be inserted here -->
-                        <div class="tab-content active" id="question">Loading...</div>
-                        <div class="tab-content" id="hint">Loading...</div>
-                        <div class="tab-content" id="blueprint">Loading...</div>
-                        <div class="tab-content" id="code">Loading...</div>
-                    </div>
-                </div>
-                
-                <!-- Back side with mnemonics -->
-                <div class="card-side card-back">
-                    <span class="method-badge" id="method-badge">METHOD</span>
-                    <div class="card-title">Memory Aids</div>
-                    <div class="content-scrollable" id="mnemonics">
-                        Loading...
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>© 2025 LeetCode Flashcards | Click the card to flip</p>
-        </footer>
-    </div>
-
-    <!-- Load the card data first -->
-    <script>
-// Arrays & Strings Flashcards Data
-const cardsData = [
-  {
-    id: 1,
-    title: "Contains Duplicate",
-    category: "Arrays & Hashing",
-    questionContent: `
-      <div class="card-title">Contains Duplicate</div>
-      <p>Given an integer array nums, return true if any value appears more than once in the array, otherwise return false.</p>
-      <br>
-      <p><strong>Example 1:</strong></p>
-      <pre>
-Input: nums = [1, 2, 3, 3]
-Output: true</pre>
-    `,
-    hintContent: `
-      <div class="card-title">Hints for Contains Duplicate</div>
-      <ul>
-        <li>Think about how to efficiently check if you've seen a number before</li>
-        <li>Could a hash set help with O(1) lookups?</li>
-        <li>Consider the tradeoff between time and space complexity</li>
-        <li>What's the brute force approach? How can we improve it?</li>
-      </ul>
-    `,
-    blueprintContent: `
-      <div class="card-title">Solution Blueprint</div>
-      <pre>
-1. Create an empty hash set to track seen numbers
-2. Iterate through each number in the array:
-   a. Check if the current number is already in the set
-   b. If it is, return True (found a duplicate)
-   c. If not, add the number to the set
-3. If we finish the loop without finding duplicates, return False</pre>
-      <div style="margin-top: 20px;">
-        <span class="complexity time">Time: O(n)</span>
-        <span class="complexity space">Space: O(n)</span>
-      </div>
-    `,
-    codeContent: `
-      <div class="card-title">Optimized Implementation</div>
-      <pre>
+<div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(n)</span>
+              </div>
+            `,
+            codeContent: `
+              <div class="card-title">Optimized Implementation</div>
+              <pre>
 class Solution:
-    def hasDuplicate(self, nums: List[int]) -> bool:
-        seen = set()
-        for num in nums:
-            if num in seen:
-                return True
-            seen.add(num)
-        return False</pre>
-      <div style="margin-top: 20px;">
-        <span class="complexity time">Time: O(n)</span>
-        <span class="complexity space">Space: O(n)</span>
-      </div>
-    `,
-    method: "HASHSET",
-    mnemonicsContent: `
-      <ul>
-        <li><strong>Track As You Go:</strong> Add each element to a hash set as you encounter it.</li>
-        <li><strong>Early Return:</strong> Return as soon as you find a duplicate - no need to process the entire array.</li>
-        <li><strong>Set vs. Array:</strong> Sets provide O(1) lookup, which is crucial for efficiency here.</li>
-        <li><strong>Think "Have I Seen This Before?":</strong> This pattern applies to many problems.</li>
-        <li><strong>Space-Time Tradeoff:</strong> Using extra space (the set) to achieve linear time complexity.</li>
-      </ul>
-    `
-  },
-  {
-    id: 2,
-    title: "Valid Anagram",
-    category: "Arrays & Hashing",
-    questionContent: `
-      <div class="card-title">Valid Anagram</div>
-      <p>Given two strings s and t, return true if the two strings are anagrams of each other, otherwise return false.</p>
-      <p>An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.</p>
-      <br>
-      <p><strong>Example 1:</strong></p>
-      <pre>
-Input: s = "racecar", t = "carrace"
-Output: true</pre>
-    `,
-    hintContent: `
-      <div class="card-title">Hints for Valid Anagram</div>
-      <ul>
-        <li>What makes two strings anagrams of each other?</li>
-        <li>Consider counting the frequency of each character</li>
-        <li>Can you use a hash table or array to track character counts?</li>
-        <li>What's an early termination condition?</li>
-        <li>Are there any optimizations for lowercase English letters?</li>
-      </ul>
-    `,
-    blueprintContent: `
-      <div class="card-title">Solution Blueprint</div>
-      <pre>
-1. If the strings have different lengths, they cannot be anagrams, return False
-2. Create a frequency array of size 26 (for lowercase letters)
-3. Iterate through both strings simultaneously:
-   a. Increment the count for characters in the first string
-   b. Decrement the count for characters in the second string
-4. Check if all counts in the frequency array are zero
-   a. If yes, the strings are anagrams, return True
-   b. If any count is non-zero, return False</pre>
-      <div style="margin-top: 20px;">
-        <span class="complexity time">Time: O(n+m)</span>
-        <span class="complexity space">Space: O(1)</span>
-      </div>
-    `,
-    codeContent: `
-      <div class="card-title">Optimized Implementation</div>
-      <pre>
+    
+    def encode(self, strs: List[str]) -> str:
+        res = ""
+        for s in strs:
+            res += str(len(s)) + "#" + s
+        return res
+
+    def decode(self, s: str) -> List[str]:
+        res = []
+        i = 0
+        
+        while i < len(s):
+            j = i
+            while s[j] != '#':
+                j += 1
+            length = int(s[i:j])
+            i = j + 1
+            j = i + length
+            res.append(s[i:j])
+            i = j
+            
+        return res</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(n)</span>
+              </div>
+            `,
+            method: "LENGTH PREFIX",
+            mnemonicsContent: `
+              <ul>
+                <li><strong>Length + Delimiter:</strong> Encode using format "length#string".</li>
+                <li><strong>Two-Pointer Extraction:</strong> Use two pointers to parse the encoded string.</li>
+                <li><strong>Find-Parse-Extract:</strong> Find the delimiter, parse the length, extract the substring.</li>
+                <li><strong>Sequential Reading:</strong> Decode by reading one string at a time, moving forward.</li>
+                <li><strong>Think Network Protocols:</strong> This encoding is similar to how data is transmitted in networks.</li>
+              </ul>
+            `
+          },
+          {
+            id: 7,
+            title: "Product of Array Except Self",
+            category: "Arrays & Hashing",
+            questionContent: `
+              <div class="card-title">Product of Array Except Self</div>
+              <p>Given an integer array nums, return an array output where output[i] is the product of all the elements of nums except nums[i].</p>
+              <p>Each product is guaranteed to fit in a 32-bit integer.</p>
+              <p>Follow-up: Could you solve it in O(n) time without using the division operation?</p>
+              <br>
+              <p><strong>Example 1:</strong></p>
+              <pre>
+Input: nums = [1,2,4,6]
+Output: [48,24,12,8]</pre>
+            `,
+            hintContent: `
+              <div class="card-title">Hints for Product of Array Except Self</div>
+              <ul>
+                <li>Consider the product of all numbers to the left of each index</li>
+                <li>Consider the product of all numbers to the right of each index</li>
+                <li>Can you use prefix and suffix products?</li>
+                <li>How can you avoid using extra space?</li>
+                <li>Try using the output array to store intermediate results</li>
+              </ul>
+            `,
+            blueprintContent: `
+              <div class="card-title">Solution Blueprint</div>
+              <pre>
+1. Create a result array filled with 1s (same size as input)
+2. Calculate prefix products:
+   a. Initialize a variable to track the running product = 1
+   b. Iterate from left to right
+   c. Store the current prefix product in the result array
+   d. Update the running product by multiplying with the current input value
+3. Calculate suffix products and multiply with prefix products:
+   a. Initialize a variable to track the running product = 1
+   b. Iterate from right to left
+   c. Multiply the current result value by the suffix product
+   d. Update the running product by multiplying with the current input value
+4. Return the result array</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(1)</span>
+              </div>
+            `,
+            codeContent: `
+              <div class="card-title">Optimized Implementation</div>
+              <pre>
 class Solution:
-    def isAnagram(self, s: str, t: str) -> bool:
-        if len(s) != len(t):
-            return False
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        res = [1] * (len(nums))
 
-        count = [0] * 26
-        for i in range(len(s)):
-            count[ord(s[i]) - ord('a')] += 1
-            count[ord(t[i]) - ord('a')] -= 1
+        prefix = 1
+        for i in range(len(nums)):
+            res[i] = prefix
+            prefix *= nums[i]
+        postfix = 1
+        for i in range(len(nums) - 1, -1, -1):
+            res[i] *= postfix
+            postfix *= nums[i]
+        return res</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(1)</span>
+              </div>
+            `,
+            method: "PREFIX & SUFFIX",
+            mnemonicsContent: `
+              <ul>
+                <li><strong>Two-Pass Approach:</strong> First calculate prefix products, then suffix products.</li>
+                <li><strong>Running Product:</strong> Maintain a running product as you iterate through the array.</li>
+                <li><strong>Output Array Reuse:</strong> Use the output array to store intermediate results (prefix products).</li>
+                <li><strong>Multiplication Splitting:</strong> The product of all except self = (product of all before) * (product of all after).</li>
+                <li><strong>No Division Needed:</strong> Solve without using division by splitting the calculation.</li>
+              </ul>
+            `
+          },
+          {
+            id: 8,
+            title: "Valid Sudoku",
+            category: "Arrays & Hashing",
+            questionContent: `
+              <div class="card-title">Valid Sudoku</div>
+              <p>You are given a 9 x 9 Sudoku board board. A Sudoku board is valid if the following rules are followed:</p>
+              <ul>
+                <li>Each row must contain the digits 1-9 without duplicates.</li>
+                <li>Each column must contain the digits 1-9 without duplicates.</li>
+                <li>Each of the nine 3 x 3 sub-boxes of the grid must contain the digits 1-9 without duplicates.</li>
+              </ul>
+              <p>Return true if the Sudoku board is valid, otherwise return false.</p>
+              <p>Note: A board does not need to be full or be solvable to be valid.</p>
+              <br>
+              <pre>
+Input: board = 
+[["1","2",".",".","3",".",".",".","."],
+ ["4",".",".","5",".",".",".",".","."],
+ [".","9","8",".",".",".",".",".","3"],
+ ["5",".",".",".","6",".",".",".","4"],
+ [".",".",".","8",".","3",".",".","5"],
+ ["7",".",".",".","2",".",".",".","6"],
+ [".",".",".",".",".",".","2",".","."],
+ [".",".",".","4","1","9",".",".","8"],
+ [".",".",".",".","8",".",".","7","9"]]
 
-        for val in count:
-            if val != 0:
-                return False
+Output: true</pre>
+            `,
+            hintContent: `
+              <div class="card-title">Hints for Valid Sudoku</div>
+              <ul>
+                <li>Consider checking rows, columns, and 3x3 boxes separately</li>
+                <li>How can you detect if a number appears more than once?</li>
+                <li>Think about using sets to track seen numbers</li>
+                <li>What's an efficient way to map a cell to its 3x3 box?</li>
+                <li>Remember to skip empty cells ('.')</li>
+              </ul>
+            `,
+            blueprintContent: `
+              <div class="card-title">Solution Blueprint</div>
+              <pre>
+1. Check each row:
+   a. For each row, create a set to track seen digits
+   b. Iterate through each cell in the row
+   c. Skip empty cells
+   d. If a digit is already in the set, return False
+   e. Otherwise, add the digit to the set
+2. Check each column (similar to rows)
+3. Check each 3x3 box:
+   a. For each of the 9 boxes, create a set
+   b. Map each cell to its corresponding box
+   c. Skip empty cells
+   d. Check for duplicates using the set
+4. If all checks pass, return True</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n²)</span>
+                <span class="complexity space">Space: O(n²)</span>
+              </div>
+            `,
+            codeContent: `
+              <div class="card-title">Optimized Implementation</div>
+              <pre>
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        for row in range(9):
+            seen = set()
+            for i in range(9):
+                if board[row][i] == ".": 
+                    continue
+                if board[row][i] in seen:
+                    return False
+                seen.add(board[row][i])
+        
+        for col in range(9):
+            seen = set()
+            for i in range(9):
+                if board[i][col] == ".":
+                    continue
+                if board[i][col] in seen:
+                    return False
+                seen.add(board[i][col])
+            
+        for square in range(9):
+            seen = set()
+            for i in range(3):
+                for j in range(3):
+                    row = (square//3) * 3 + i
+                    col = (square % 3) * 3 + j
+                    if board[row][col] == ".":
+                        continue
+                    if board[row][col] in seen:
+                        return False
+                    seen.add(board[row][col])
         return True</pre>
-      <div style="margin-top: 20px;">
-        <span class="complexity time">Time: O(n+m)</span>
-        <span class="complexity space">Space: O(1)</span>
-      </div>
-    `,
-    method: "HASH TABLE",
-    mnemonicsContent: `
-      <ul>
-        <li><strong>Character Counting:</strong> Track the frequency of each character - anagrams have identical counts.</li>
-        <li><strong>Array vs. Dictionary:</strong> For lowercase letters, a fixed-size array is more efficient than a hash map.</li>
-        <li><strong>Plus-Minus Method:</strong> Increment for first string, decrement for second - at the end all should be zero.</li>
-        <li><strong>Early Return on Length:</strong> Different lengths means not anagrams - check this first!</li>
-        <li><strong>ASCII Math:</strong> Remember 'a' is 97 in ASCII, so ord(char) - ord('a') maps to 0-25.</li>
-      </ul>
-    `
-  },
-  // Add the rest of your cards here...
-  // Copy the rest of your cards from cards-data.js
-];
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n²)</span>
+                <span class="complexity space">Space: O(n²)</span>
+              </div>
+            `,
+            method: "HASH SET",
+            mnemonicsContent: `
+              <ul>
+                <li><strong>Three Separate Checks:</strong> Validate rows, columns, and 3x3 boxes independently.</li>
+                <li><strong>Set-Based Validation:</strong> Use hash sets to detect duplicates in each group.</li>
+                <li><strong>Box Indexing Formula:</strong> (square//3)*3 + i for row, (square%3)*3 + j for column.</li>
+                <li><strong>Empty Cell Skipping:</strong> Always skip cells containing "." before checking.</li>
+                <li><strong>Early Return:</strong> As soon as any invalid condition is found, return False.</li>
+              </ul>
+            `
+          },
+          {
+            id: 9,
+            title: "Longest Consecutive Sequence",
+            category: "Arrays & Hashing",
+            questionContent: `
+              <div class="card-title">Longest Consecutive Sequence</div>
+              <p>Given an array of integers nums, return the length of the longest consecutive sequence of elements that can be formed.</p>
+              <p>A consecutive sequence is a sequence of elements in which each element is exactly 1 greater than the previous element. The elements do not have to be consecutive in the original array.</p>
+              <p>You must write an algorithm that runs in O(n) time.</p>
+              <br>
+              <p><strong>Example 1:</strong></p>
+              <pre>
+Input: nums = [2,20,4,10,3,4,5]
+Output: 4</pre>
+            `,
+            hintContent: `
+              <div class="card-title">Hints for Longest Consecutive Sequence</div>
+              <ul>
+                <li>How can you efficiently find if a number is part of a sequence?</li>
+                <li>Consider using a set for O(1) lookups</li>
+                <li>When should you start counting a sequence?</li>
+                <li>Is there a way to avoid duplicate work?</li>
+                <li>Think about finding the start of each sequence</li>
+              </ul>
+            `,
+            blueprintContent: `
+              <div class="card-title">Solution Blueprint</div>
+              <pre>
+1. Create a set from the input array for O(1) lookups
+2. Initialize a variable to track the longest sequence found
+3. For each number in the set:
+   a. Check if it's the start of a sequence (num-1 is not in the set)
+   b. If it's a start, count consecutive numbers (num+1, num+2, etc.)
+   c. Update the longest sequence if the current one is longer
+4. Return the length of the longest sequence found</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(n)</span>
+              </div>
+            `,
+            codeContent: `
+              <div class="card-title">Optimized Implementation</div>
+              <pre>
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        numSet = set(nums)
+        longest = 0
 
-// Add a debug alert to check if cards loaded
-console.log("Cards data loaded successfully with " + cardsData.length + " cards");
-</script>
+        for num in numSet:
+            if (num - 1) not in numSet:
+                length = 1
+                while (num + length) in numSet:
+                    length += 1
+                longest = max(length, longest)
+        return longest</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(n)</span>
+              </div>
+            `,
+            method: "HASH SET",
+            mnemonicsContent: `
+              <ul>
+                <li><strong>Find Sequence Starts:</strong> Only check numbers that could be the start of a sequence.</li>
+                <li><strong>Efficient Lookups:</strong> Use a hash set for O(1) membership tests.</li>
+                <li><strong>Linear Scanning:</strong> Once a start is found, iterate forward to find sequence length.</li>
+                <li><strong>Avoid Duplicate Work:</strong> Skip numbers that can't be sequence starts.</li>
+                <li><strong>Track Max Length:</strong> Keep track of the longest sequence found so far.</li>
+              </ul>
+            `
+          },
+          {
+            id: 10,
+            title: "Valid Palindrome",
+            category: "Two Pointers",
+            questionContent: `
+              <div class="card-title">Valid Palindrome</div>
+              <p>A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.</p>
+              <p>Given a string s, return true if it is a palindrome, otherwise return false.</p>
+              <br>
+              <p><strong>Example 1:</strong></p>
+              <pre>
+Input: s = "A man, a plan, a canal: Panama"
+Output: true
+Explanation: "amanaplanacanalpanama" is a palindrome.</pre>
+            `,
+            hintContent: `
+              <div class="card-title">Hints for Valid Palindrome</div>
+              <ul>
+                <li>How do you handle uppercase and lowercase characters?</li>
+                <li>What characters should you ignore?</li>
+                <li>Can you use two pointers to check from both ends?</li>
+                <li>Consider how to efficiently compare characters without creating a new string</li>
+                <li>What are the edge cases to handle?</li>
+              </ul>
+            `,
+            blueprintContent: `
+              <div class="card-title">Solution Blueprint</div>
+              <pre>
+1. Initialize two pointers, left at the beginning and right at the end
+2. While left < right:
+   a. Skip non-alphanumeric characters from left
+   b. Skip non-alphanumeric characters from right
+   c. Compare characters at left and right (case-insensitive)
+   d. If they don't match, return False
+   e. Move left forward and right backward
+3. If the loop completes, return True</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(1)</span>
+              </div>
+            `,
+            codeContent: `
+              <div class="card-title">Optimized Implementation</div>
+              <pre>
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        l, r = 0, len(s) - 1
+        
+        while l < r:
+            while l < r and not self.isAlphaNum(s[l]):
+                l += 1
+            while l < r and not self.isAlphaNum(s[r]):
+                r -= 1
+                
+            if s[l].lower() != s[r].lower():
+                return False
+                
+            l += 1
+            r -= 1
+        return True
+    
+    def isAlphaNum(self, c: str) -> bool:
+        return (ord('A') <= ord(c) <= ord('Z') or
+                ord('a') <= ord(c) <= ord('z') or
+                ord('0') <= ord(c) <= ord('9'))</pre>
+              <div style="margin-top: 20px;">
+                <span class="complexity time">Time: O(n)</span>
+                <span class="complexity space">Space: O(1)</span>
+              </div>
+            `,
+            method: "TWO POINTERS",
+            mnemonicsContent: `
+              <ul>
+                <li><strong>Skip and Compare:</strong> Skip irrelevant characters, compare valid ones.</li>
+                <li><strong>Outside-In Approach:</strong> Check from both ends moving inward.</li>
+                <li><strong>Case Insensitivity:</strong> Convert to lowercase before comparing.</li>
+                <li><strong>In-place Checking:</strong> No need for extra string - check the original directly.</li>
+                <li><strong>Helper Function:</strong> Create a separate function for character validation to keep code clean.</li>
+              </ul>
+            `
+          }
+        ];
+
+        // Debug message
+        console.log("Cards data loaded successfully with " + cardsData.length + " cards");
+    </script>
+    
     <script>
         // Global variable to track current card
         let currentCardIndex = 0;
@@ -666,30 +499,20 @@ console.log("Cards data loaded successfully with " + cardsData.length + " cards"
             });
         });
         
-        // Initialize when the document is fully loaded
+        // Initialize the app as soon as possible
         document.addEventListener('DOMContentLoaded', function() {
             console.log("DOM loaded, initializing cards");
-            // Ensure cardsData is accessible
-            if (typeof cardsData !== 'undefined') {
-                console.log("Found cardsData with", cardsData.length, "cards");
-                updateCardContent();
-            } else {
-                console.error("cardsData not found! Check if cards-data.js is loaded properly.");
-            }
+            updateCardContent();
         });
 
-        // Also try to initialize immediately in case DOMContentLoaded already fired
+        // Also try to initialize immediately
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             console.log("Document already loaded, initializing now");
-            setTimeout(function() {
-                if (typeof cardsData !== 'undefined') {
-                    updateCardContent();
-                }
-            }, 500); // Small delay to ensure cards-data.js is loaded
+            setTimeout(updateCardContent, 100);
         }
 
-        // Console log for debugging
-        console.log("Script loaded. Waiting for page to complete loading...");
+        // Initialize immediately regardless of document state
+        updateCardContent();
     </script>
 </body>
 </html>
