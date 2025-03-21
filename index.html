@@ -388,10 +388,10 @@
                     <div class="category-badge" id="category-badge">Arrays & Hashing</div>
                     <div class="content-scrollable">
                         <!-- Dynamic content for tabs will be inserted here -->
-                        <div class="tab-content active" id="question"></div>
-                        <div class="tab-content" id="hint"></div>
-                        <div class="tab-content" id="blueprint"></div>
-                        <div class="tab-content" id="code"></div>
+                        <div class="tab-content active" id="question">Loading...</div>
+                        <div class="tab-content" id="hint">Loading...</div>
+                        <div class="tab-content" id="blueprint">Loading...</div>
+                        <div class="tab-content" id="code">Loading...</div>
                     </div>
                 </div>
                 
@@ -400,7 +400,7 @@
                     <span class="method-badge" id="method-badge">METHOD</span>
                     <div class="card-title">Memory Aids</div>
                     <div class="content-scrollable" id="mnemonics">
-                        <!-- Dynamic content for mnemonics will be inserted here -->
+                        Loading...
                     </div>
                 </div>
             </div>
@@ -411,26 +411,39 @@
         </footer>
     </div>
 
+    <!-- Load the card data first -->
     <script src="cards-data.js"></script>
+    
     <script>
+        // Global variable to track current card
         let currentCardIndex = 0;
         
         // Function to update the card content
         function updateCardContent() {
+            console.log("Updating card to index:", currentCardIndex);
+            console.log("Total cards:", cardsData.length);
+            
+            // Make sure cardsData is available
+            if (!cardsData || !cardsData.length) {
+                console.error("Card data not found!");
+                return;
+            }
+            
             const card = cardsData[currentCardIndex];
+            console.log("Current card:", card.title);
             
             // Update category badge
-            document.getElementById('category-badge').textContent = card.category;
+            document.getElementById('category-badge').textContent = card.category || "Unknown";
             
             // Update tab contents
-            document.getElementById('question').innerHTML = card.questionContent;
-            document.getElementById('hint').innerHTML = card.hintContent;
-            document.getElementById('blueprint').innerHTML = card.blueprintContent;
-            document.getElementById('code').innerHTML = card.codeContent;
+            document.getElementById('question').innerHTML = card.questionContent || "Question content missing";
+            document.getElementById('hint').innerHTML = card.hintContent || "Hint content missing";
+            document.getElementById('blueprint').innerHTML = card.blueprintContent || "Blueprint content missing";
+            document.getElementById('code').innerHTML = card.codeContent || "Code content missing";
             
             // Update back side
-            document.getElementById('method-badge').textContent = card.method;
-            document.getElementById('mnemonics').innerHTML = card.mnemonicsContent;
+            document.getElementById('method-badge').textContent = card.method || "METHOD";
+            document.getElementById('mnemonics').innerHTML = card.mnemonicsContent || "Mnemonics content missing";
             
             // Update navigation
             document.getElementById('current-card').textContent = currentCardIndex + 1;
@@ -470,6 +483,7 @@
         
         // Navigation buttons
         document.getElementById('prev-button').addEventListener('click', function() {
+            console.log("Prev button clicked, current index:", currentCardIndex);
             if (currentCardIndex > 0) {
                 currentCardIndex--;
                 updateCardContent();
@@ -479,6 +493,7 @@
         });
         
         document.getElementById('next-button').addEventListener('click', function() {
+            console.log("Next button clicked, current index:", currentCardIndex);
             if (currentCardIndex < cardsData.length - 1) {
                 currentCardIndex++;
                 updateCardContent();
@@ -507,10 +522,30 @@
             });
         });
         
-        // Initialize the first card when the page loads
+        // Initialize when the document is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            updateCardContent();
+            console.log("DOM loaded, initializing cards");
+            // Ensure cardsData is accessible
+            if (typeof cardsData !== 'undefined') {
+                console.log("Found cardsData with", cardsData.length, "cards");
+                updateCardContent();
+            } else {
+                console.error("cardsData not found! Check if cards-data.js is loaded properly.");
+            }
         });
+
+        // Also try to initialize immediately in case DOMContentLoaded already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            console.log("Document already loaded, initializing now");
+            setTimeout(function() {
+                if (typeof cardsData !== 'undefined') {
+                    updateCardContent();
+                }
+            }, 500); // Small delay to ensure cards-data.js is loaded
+        }
+
+        // Console log for debugging
+        console.log("Script loaded. Waiting for page to complete loading...");
     </script>
 </body>
 </html>
