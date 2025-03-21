@@ -89,6 +89,39 @@
             background-color: #e6f7ff;
         }
 
+        /* Navigation controls */
+        .card-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .nav-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #357abd;
+        }
+
+        .nav-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .card-counter {
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
         /* Flashcard container */
         .flashcard-container {
             perspective: 1000px;
@@ -293,6 +326,28 @@
             color: white;
         }
 
+        /* Category badge */
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #4a90e2;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        body.dark-theme .category-badge {
+            background-color: #357abd;
+        }
+
+        body.blue-theme .category-badge {
+            background-color: #0069be;
+            color: white;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -314,6 +369,12 @@
             </div>
         </header>
 
+        <div class="card-navigation">
+            <button class="nav-button" id="prev-button" disabled>Previous</button>
+            <div class="card-counter">Card <span id="current-card">1</span> of <span id="total-cards">10</span></div>
+            <button class="nav-button" id="next-button">Next</button>
+        </div>
+
         <div class="flashcard-container">
             <div class="flashcard">
                 <!-- Front side with tabs -->
@@ -324,104 +385,22 @@
                         <div class="tab" data-tab="blueprint">Blueprint</div>
                         <div class="tab" data-tab="code">Code</div>
                     </div>
+                    <div class="category-badge" id="category-badge">Arrays & Hashing</div>
                     <div class="content-scrollable">
-                        <!-- Question Tab Content -->
-                        <div class="tab-content active" id="question">
-                            <div class="card-title">704. Binary Search</div>
-                            <p>Given an array of integers <code>nums</code> which is sorted in ascending order, and an integer <code>target</code>, write a function to search <code>target</code> in <code>nums</code>. If <code>target</code> exists, then return its index. Otherwise, return <code>-1</code>.</p>
-                            <p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>
-                            <br>
-                            <p><strong>Example 1:</strong></p>
-                            <pre>
-Input: nums = [-1,0,3,5,9,12], target = 9
-Output: 4
-Explanation: 9 exists in nums and its index is 4</pre>
-                            <p><strong>Example 2:</strong></p>
-                            <pre>
-Input: nums = [-1,0,3,5,9,12], target = 2
-Output: -1
-Explanation: 2 does not exist in nums so return -1</pre>
-                        </div>
-                        
-                        <!-- Hint Tab Content -->
-                        <div class="tab-content" id="hint">
-                            <div class="card-title">Hints for Binary Search</div>
-                            <ul>
-                                <li>The key idea is to divide the search space in half each time</li>
-                                <li>Use two pointers: left and right to track the search space</li>
-                                <li>Calculate the middle index and compare with target value</li>
-                                <li>If target is less than the middle value, search in the left half</li>
-                                <li>If target is greater than the middle value, search in the right half</li>
-                                <li>If target is equal to the middle value, return the middle index</li>
-                                <li>Be careful about integer overflow when calculating the middle index</li>
-                                <li>Continue until either the target is found or the search space is empty</li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Blueprint Tab Content -->
-                        <div class="tab-content" id="blueprint">
-                            <div class="card-title">Solution Blueprint</div>
-                            <pre>
-1. Initialize left pointer to 0 and right pointer to length of array - 1
-2. While left <= right:
-   a. Calculate middle index: m = left + (right - left) // 2
-   b. If nums[m] > target:
-      i. Search in left half: right = m - 1
-   c. Else if nums[m] < target:
-      i. Search in right half: left = m + 1
-   d. Else:
-      i. Target found: return m
-3. If loop exits without finding target, return -1</pre>
-                            <div style="margin-top: 20px;">
-                                <span class="complexity time">Time: O(log n)</span>
-                                <span class="complexity space">Space: O(1)</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Code Tab Content -->
-                        <div class="tab-content" id="code">
-                            <div class="card-title">Optimized Implementation</div>
-                            <pre>
-class Solution:
-    def search(self, nums: List[int], target: int) -> int:
-        l, r = 0, len(nums) - 1
-        while l <= r:
-            # (l + r) // 2 can lead to overflow
-            m = l + ((r - l) // 2)  
-            if nums[m] > target:
-                r = m - 1
-            elif nums[m] < target:
-                l = m + 1
-            else:
-                return m
-        return -1</pre>
-                            <div style="margin-top: 20px;">
-                                <span class="complexity time">Time: O(log n)</span>
-                                <span class="complexity space">Space: O(1)</span>
-                            </div>
-                        </div>
+                        <!-- Dynamic content for tabs will be inserted here -->
+                        <div class="tab-content active" id="question"></div>
+                        <div class="tab-content" id="hint"></div>
+                        <div class="tab-content" id="blueprint"></div>
+                        <div class="tab-content" id="code"></div>
                     </div>
                 </div>
                 
                 <!-- Back side with mnemonics -->
                 <div class="card-side card-back">
-                    <span class="method-badge">BINARY SEARCH</span>
+                    <span class="method-badge" id="method-badge">METHOD</span>
                     <div class="card-title">Memory Aids</div>
-                    <div class="content-scrollable">
-                        <ul>
-                            <li><strong>L.M.R Pattern:</strong> Left, Middle, Right pointers to divide and conquer.</li>
-                            <li><strong>Half & Half:</strong> Always eliminate half the search space in each iteration.</li>
-                            <li><strong>Safety First:</strong> Use m = l + (r - l) // 2 to avoid integer overflow.</li>
-                            <li><strong>Equal Sign Matters:</strong> Use l <= r to ensure single element arrays are processed.</li>
-                            <li><strong>Comparison Triangle:</strong> 
-                                <ul>
-                                    <li>nums[m] > target: move right pointer left</li>
-                                    <li>nums[m] < target: move left pointer right</li>
-                                    <li>nums[m] == target: found it!</li>
-                                </ul>
-                            </li>
-                            <li><strong>Think Logarithm:</strong> If the input size halves each time, it's likely O(log n).</li>
-                        </ul>
+                    <div class="content-scrollable" id="mnemonics">
+                        <!-- Dynamic content for mnemonics will be inserted here -->
                     </div>
                 </div>
             </div>
@@ -432,10 +411,42 @@ class Solution:
         </footer>
     </div>
 
+    <script src="cards-data.js"></script>
     <script>
+        let currentCardIndex = 0;
+        
+        // Function to update the card content
+        function updateCardContent() {
+            const card = cardsData[currentCardIndex];
+            
+            // Update category badge
+            document.getElementById('category-badge').textContent = card.category;
+            
+            // Update tab contents
+            document.getElementById('question').innerHTML = card.questionContent;
+            document.getElementById('hint').innerHTML = card.hintContent;
+            document.getElementById('blueprint').innerHTML = card.blueprintContent;
+            document.getElementById('code').innerHTML = card.codeContent;
+            
+            // Update back side
+            document.getElementById('method-badge').textContent = card.method;
+            document.getElementById('mnemonics').innerHTML = card.mnemonicsContent;
+            
+            // Update navigation
+            document.getElementById('current-card').textContent = currentCardIndex + 1;
+            document.getElementById('total-cards').textContent = cardsData.length;
+            
+            // Update navigation buttons
+            document.getElementById('prev-button').disabled = currentCardIndex === 0;
+            document.getElementById('next-button').disabled = currentCardIndex === cardsData.length - 1;
+        }
+        
         // Card flip functionality
-        document.querySelector('.flashcard').addEventListener('click', function() {
-            this.classList.toggle('is-flipped');
+        document.querySelector('.flashcard').addEventListener('click', function(e) {
+            // Don't flip if clicking on tabs
+            if (!e.target.classList.contains('tab')) {
+                this.classList.toggle('is-flipped');
+            }
         });
         
         // Tab switching functionality
@@ -457,6 +468,25 @@ class Solution:
             });
         });
         
+        // Navigation buttons
+        document.getElementById('prev-button').addEventListener('click', function() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCardContent();
+                // Ensure card is showing front side when navigating
+                document.querySelector('.flashcard').classList.remove('is-flipped');
+            }
+        });
+        
+        document.getElementById('next-button').addEventListener('click', function() {
+            if (currentCardIndex < cardsData.length - 1) {
+                currentCardIndex++;
+                updateCardContent();
+                // Ensure card is showing front side when navigating
+                document.querySelector('.flashcard').classList.remove('is-flipped');
+            }
+        });
+        
         // Theme switching functionality
         const themeButtons = document.querySelectorAll('.theme-btn');
         themeButtons.forEach(button => {
@@ -476,7 +506,11 @@ class Solution:
                 }
             });
         });
+        
+        // Initialize the first card when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCardContent();
+        });
     </script>
-    <script src="cards-data.js"></script>
 </body>
 </html>
