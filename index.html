@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Flashcards</title>
+    <style>
+        /* Global styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Theme colors */
+        body.light-theme {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        body.dark-theme {
+            background-color: #1e1e1e;
+            color: #f5f5f5;
+        }
+
+        body.blue-theme {
+            background-color: #e6f7ff;
+            color: #0a3055;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Theme selector */
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            transition: transform 0.2s;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .light-btn {
+            background-color: #f5f5f5;
+        }
+
+        .dark-btn {
+            background-color: #1e1e1e;
+        }
+
+        .blue-btn {
+            background-color: #e6f7ff;
+        }
+
+        /* Flashcard container */
+        .flashcard-container {
+            perspective: 1000px;
+            width: 500px;
+            height: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Flashcard */
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .flashcard.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Card sides */
+        .card-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .card-front {
+            background-color: white;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-back {
+            background-color: #ffd700;
+            color: #333;
+            transform: rotateY(180deg);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollable content */
+        .content-scrollable {
+            overflow-y: auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background-color: #f0f0f0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex-grow: 1;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Code styling */
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Dark theme overrides */
+        body.dark-theme .card-front {
+            background-color: #2d2d2d;
+            color: #f5f5f5;
+        }
+
+        body.dark-theme .tabs {
+            background-color: #3d3d3d;
+        }
+
+        body.dark-theme .tab.active {
+            background-color: #2d2d2d;
+        }
+
+        body.dark-theme pre {
+            background-color: #3d3d3d;
+            color: #f5f5f5;
+        }
+
+        /* Blue theme overrides */
+        body.blue-theme .card-front {
+            background-color: #f0f8ff;
+            color: #0a3055;
+        }
+
+        body.blue-theme .tabs {
+            background-color: #d6eaff;
+        }
+
+        body.blue-theme .tab.active {
+            background-color: #f0f8ff;
+            border-bottom: 3px solid #0078d7;
+        }
+
+        body.blue-theme .card-back {
+            background-color: #b3e0ff;
+            color: #0a3055;
+        }
+
+        body.blue-theme pre {
+            background-color: #e6f7ff;
+            color: #0a3055;
+        }
+
+        /* Card title */
+        .card-title {
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Complexity badges */
+        .complexity {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .time {
+            background-color: #e6f7ff;
+            color: #0078d7;
+        }
+
+        .space {
+            background-color: #fff4e6;
+            color: #ff9500;
+        }
+
+        /* Dark theme complexity badges */
+        body.dark-theme .complexity.time {
+            background-color: #003366;
+            color: #4db8ff;
+        }
+
+        body.dark-theme .complexity.space {
+            background-color: #663300;
+            color: #ffc266;
+        }
+
+        /* Method badge */
+        .method-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #ffd700;
+            color: #333;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        body.dark-theme .method-badge {
+            background-color: #ffd700;
+            color: #333;
+        }
+
+        body.blue-theme .method-badge {
+            background-color: #0078d7;
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <div class="container">
+        <header>
+            <div class="logo">LeetCode Flashcards</div>
+            <div class="theme-selector">
+                <div class="theme-btn light-btn" title="Light Theme"></div>
+                <div class="theme-btn dark-btn" title="Dark Theme"></div>
+                <div class="theme-btn blue-btn" title="Blue Theme"></div>
+            </div>
+        </header>
+
+        <div class="flashcard-container">
+            <div class="flashcard">
+                <!-- Front side with tabs -->
+                <div class="card-side card-front">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="question">Question</div>
+                        <div class="tab" data-tab="hint">Hint</div>
+                        <div class="tab" data-tab="blueprint">Blueprint</div>
+                        <div class="tab" data-tab="code">Code</div>
+                    </div>
+                    <div class="content-scrollable">
+                        <!-- Question Tab Content -->
+                        <div class="tab-content active" id="question">
+                            <div class="card-title">704. Binary Search</div>
+                            <p>Given an array of integers <code>nums</code> which is sorted in ascending order, and an integer <code>target</code>, write a function to search <code>target</code> in <code>nums</code>. If <code>target</code> exists, then return its index. Otherwise, return <code>-1</code>.</p>
+                            <p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>
+                            <br>
+                            <p><strong>Example 1:</strong></p>
+                            <pre>
+Input: nums = [-1,0,3,5,9,12], target = 9
+Output: 4
+Explanation: 9 exists in nums and its index is 4</pre>
+                            <p><strong>Example 2:</strong></p>
+                            <pre>
+Input: nums = [-1,0,3,5,9,12], target = 2
+Output: -1
+Explanation: 2 does not exist in nums so return -1</pre>
+                        </div>
+                        
+                        <!-- Hint Tab Content -->
+                        <div class="tab-content" id="hint">
+                            <div class="card-title">Hints for Binary Search</div>
+                            <ul>
+                                <li>The key idea is to divide the search space in half each time</li>
+                                <li>Use two pointers: left and right to track the search space</li>
+                                <li>Calculate the middle index and compare with target value</li>
+                                <li>If target is less than the middle value, search in the left half</li>
+                                <li>If target is greater than the middle value, search in the right half</li>
+                                <li>If target is equal to the middle value, return the middle index</li>
+                                <li>Be careful about integer overflow when calculating the middle index</li>
+                                <li>Continue until either the target is found or the search space is empty</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Blueprint Tab Content -->
+                        <div class="tab-content" id="blueprint">
+                            <div class="card-title">Solution Blueprint</div>
+                            <pre>
+1. Initialize left pointer to 0 and right pointer to length of array - 1
+2. While left <= right:
+   a. Calculate middle index: m = left + (right - left) // 2
+   b. If nums[m] > target:
+      i. Search in left half: right = m - 1
+   c. Else if nums[m] < target:
+      i. Search in right half: left = m + 1
+   d. Else:
+      i. Target found: return m
+3. If loop exits without finding target, return -1</pre>
+                            <div style="margin-top: 20px;">
+                                <span class="complexity time">Time: O(log n)</span>
+                                <span class="complexity space">Space: O(1)</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Code Tab Content -->
+                        <div class="tab-content" id="code">
+                            <div class="card-title">Optimized Implementation</div>
+                            <pre>
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        l, r = 0, len(nums) - 1
+        while l <= r:
+            # (l + r) // 2 can lead to overflow
+            m = l + ((r - l) // 2)  
+            if nums[m] > target:
+                r = m - 1
+            elif nums[m] < target:
+                l = m + 1
+            else:
+                return m
+        return -1</pre>
+                            <div style="margin-top: 20px;">
+                                <span class="complexity time">Time: O(log n)</span>
+                                <span class="complexity space">Space: O(1)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Back side with mnemonics -->
+                <div class="card-side card-back">
+                    <span class="method-badge">BINARY SEARCH</span>
+                    <div class="card-title">Memory Aids</div>
+                    <div class="content-scrollable">
+                        <ul>
+                            <li><strong>L.M.R Pattern:</strong> Left, Middle, Right pointers to divide and conquer.</li>
+                            <li><strong>Half & Half:</strong> Always eliminate half the search space in each iteration.</li>
+                            <li><strong>Safety First:</strong> Use m = l + (r - l) // 2 to avoid integer overflow.</li>
+                            <li><strong>Equal Sign Matters:</strong> Use l <= r to ensure single element arrays are processed.</li>
+                            <li><strong>Comparison Triangle:</strong> 
+                                <ul>
+                                    <li>nums[m] > target: move right pointer left</li>
+                                    <li>nums[m] < target: move left pointer right</li>
+                                    <li>nums[m] == target: found it!</li>
+                                </ul>
+                            </li>
+                            <li><strong>Think Logarithm:</strong> If the input size halves each time, it's likely O(log n).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 LeetCode Flashcards | Click the card to flip</p>
+        </footer>
+    </div>
+
+    <script>
+        // Card flip functionality
+        document.querySelector('.flashcard').addEventListener('click', function() {
+            this.classList.toggle('is-flipped');
+        });
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card flip when clicking on tabs
+                
+                // Remove active class from all tabs and tab contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Theme switching functionality
+        const themeButtons = document.querySelectorAll('.theme-btn');
+        themeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const body = document.body;
+                
+                // Remove all theme classes
+                body.classList.remove('light-theme', 'dark-theme', 'blue-theme');
+                
+                // Add selected theme class
+                if (this.classList.contains('light-btn')) {
+                    body.classList.add('light-theme');
+                } else if (this.classList.contains('dark-btn')) {
+                    body.classList.add('dark-theme');
+                } else if (this.classList.contains('blue-btn')) {
+                    body.classList.add('blue-theme');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
