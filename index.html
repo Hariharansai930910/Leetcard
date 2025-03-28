@@ -51,11 +51,69 @@
             align-items: center;
             padding: 20px 0;
             margin-bottom: 30px;
+            position: relative;
         }
 
         .logo {
             font-size: 24px;
             font-weight: bold;
+        }
+
+        /* Score display */
+        .score-container {
+            position: absolute;
+            top: 0;
+            right: 100px;
+            z-index: 100;
+        }
+
+        #score-display {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        #score-display.high-score {
+            background-color: #ffd700;
+            color: #333;
+            transform: scale(1.05);
+        }
+
+        /* Animation for points gained */
+        .points-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffd700;
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0;
+            z-index: 1000;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        .points-animation.animate {
+            animation: points-popup 1s ease-out forwards;
+        }
+
+        @keyframes points-popup {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -30%) scale(1);
+            }
         }
 
         /* Theme selector */
@@ -129,6 +187,7 @@
             height: 500px;
             margin: 0 auto;
             position: relative;
+            aspect-ratio: 1/1;
         }
 
         /* Flashcard */
@@ -168,7 +227,7 @@
             background-color: #ffd700;
             color: #333;
             transform: rotateY(180deg);
-            padding: 30px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
         }
@@ -178,6 +237,7 @@
             overflow-y: auto;
             padding: 20px;
             flex-grow: 1;
+            max-height: 100%;
         }
 
         /* Tabs */
@@ -222,6 +282,82 @@
             font-family: 'Courier New', monospace;
         }
 
+        /* Code block styling */
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 200px;
+            margin-bottom: 15px;
+        }
+
+        /* Custom scrollbar for code blocks */
+        .code-block::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Dark theme scrollbar */
+        body.dark-theme .code-block::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        body.dark-theme .code-block::-webkit-scrollbar-thumb {
+            background: #666;
+        }
+
+        /* Explanation and mnemonics styling */
+        .explanation-block {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .mnemonics-block {
+            background-color: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffd700;
+        }
+
+        body.dark-theme .explanation-block {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-theme .mnemonics-block {
+            background-color: rgba(255, 215, 0, 0.2);
+        }
+
+        body.blue-theme .explanation-block {
+            background-color: rgba(0, 120, 215, 0.05);
+        }
+
+        body.blue-theme .mnemonics-block {
+            background-color: rgba(0, 120, 215, 0.1);
+            border-left: 4px solid #0078d7;
+        }
+
         /* Dark theme overrides */
         body.dark-theme .card-front {
             background-color: #2d2d2d;
@@ -237,6 +373,11 @@
         }
 
         body.dark-theme pre {
+            background-color: #3d3d3d;
+            color: #f5f5f5;
+        }
+
+        body.dark-theme .code-block {
             background-color: #3d3d3d;
             color: #f5f5f5;
         }
@@ -262,6 +403,11 @@
         }
 
         body.blue-theme pre {
+            background-color: #e6f7ff;
+            color: #0a3055;
+        }
+
+        body.blue-theme .code-block {
             background-color: #e6f7ff;
             color: #0a3055;
         }
@@ -312,7 +458,7 @@
             background-color: #ffd700;
             color: #333;
             border-radius: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
@@ -348,6 +494,79 @@
             color: white;
         }
 
+        /* Share button */
+        .share-button {
+            position: absolute;
+            top: 10px;
+            right: 80px;
+            width: 32px;
+            height: 32px;
+            background-color: #4a90e2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+
+        .share-button:hover {
+            background-color: #357abd;
+        }
+
+        body.dark-theme .share-button {
+            background-color: #357abd;
+        }
+
+        body.blue-theme .share-button {
+            background-color: #0069be;
+        }
+
+        .share-tooltip {
+            position: absolute;
+            background-color: white;
+            color: #333;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            top: 45px;
+            right: 0;
+            width: 200px;
+            display: none;
+            z-index: 11;
+        }
+
+        .share-tooltip.active {
+            display: block;
+        }
+
+        body.dark-theme .share-tooltip {
+            background-color: #2d2d2d;
+            color: white;
+        }
+
+        body.blue-theme .share-tooltip {
+            background-color: #f0f8ff;
+            color: #0a3055;
+        }
+
+        .copy-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .copy-button:hover {
+            background-color: #357abd;
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -362,6 +581,9 @@
     <div class="container">
         <header>
             <div class="logo">LeetCode Flashcards</div>
+            <div class="score-container">
+                <div id="score-display">Weekly Score: 0</div>
+            </div>
             <div class="theme-selector">
                 <div class="theme-btn light-btn" title="Light Theme"></div>
                 <div class="theme-btn dark-btn" title="Dark Theme"></div>
@@ -385,6 +607,15 @@
                         <div class="tab" data-tab="blueprint">Blueprint</div>
                         <div class="tab" data-tab="code">Code</div>
                     </div>
+                    <div class="share-button" id="share-button" title="Share this card">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </div>
                     <div class="category-badge" id="category-badge">Arrays & Hashing</div>
                     <div class="content-scrollable">
                         <!-- Dynamic content for tabs will be inserted here -->
@@ -395,12 +626,31 @@
                     </div>
                 </div>
                 
-                <!-- Back side with mnemonics -->
+                <!-- Back side with improved structure -->
                 <div class="card-side card-back">
                     <span class="method-badge" id="method-badge">METHOD</span>
-                    <div class="card-title">Memory Aids</div>
-                    <div class="content-scrollable" id="mnemonics">
-                        Loading...
+                    
+                    <div class="content-scrollable">
+                        <!-- Code explanation section -->
+                        <div class="card-title">What This Code Does</div>
+                        <div id="code-explanation" class="explanation-block">
+                            Loading explanation...
+                        </div>
+                        
+                        <!-- Mnemonics section -->
+                        <div class="card-title">Memory Aids</div>
+                        <div id="mnemonics" class="mnemonics-block">
+                            Loading memory aids...
+                        </div>
+                        
+                        <!-- Solution code -->
+                        <div class="card-title">Solution Code</div>
+                        <div class="code-block" id="solution-code">
+                            Loading code...
+                        </div>
+                        
+                        <!-- Quiz section -->
+                        <button id="answer-button" class="nav-button" style="width: 100%; margin-top: 10px;">I Know The Answer (+10 points)</button>
                     </div>
                 </div>
             </div>
@@ -468,13 +718,14 @@ class Solution:
               </div>
             `,
             method: "HASHSET",
+            codeExplanation: "This code checks if a list of integers contains any duplicates. It iterates through the list, adding each number to a set. If a number is already in the set, it returns True (indicating a duplicate). If no duplicates are found, it returns False.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Club Entry Check:</strong> Like a bouncer at a club, the set (seen) is checking if anyone's already entered. Once seen, they're rejected!</li>
                 <li><strong>Track As You Go:</strong> Add each element to a hash set as you encounter it.</li>
                 <li><strong>Early Return:</strong> Return as soon as you find a duplicate - no need to process the entire array.</li>
                 <li><strong>Set vs. Array:</strong> Sets provide O(1) lookup, which is crucial for efficiency here.</li>
                 <li><strong>Think "Have I Seen This Before?":</strong> This pattern applies to many problems.</li>
-                <li><strong>Space-Time Tradeoff:</strong> Using extra space (the set) to achieve linear time complexity.</li>
               </ul>
             `
           },
@@ -541,13 +792,14 @@ class Solution:
               </div>
             `,
             method: "HASH TABLE",
+            codeExplanation: "This code determines if two strings are anagrams (contain exactly the same characters in different order). First, it checks if the lengths match (if not, they can't be anagrams). Then it counts character frequencies using an array of 26 positions (for a-z). It increments counts for characters in the first string and decrements for the second. If the strings are anagrams, all counts will be zero.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Balance Sheet Approach:</strong> Think of each character as a financial transaction - deposits from string 1, withdrawals from string 2. At the end, all accounts should have zero balance!</li>
                 <li><strong>Character Counting:</strong> Track the frequency of each character - anagrams have identical counts.</li>
                 <li><strong>Array vs. Dictionary:</strong> For lowercase letters, a fixed-size array is more efficient than a hash map.</li>
                 <li><strong>Plus-Minus Method:</strong> Increment for first string, decrement for second - at the end all should be zero.</li>
                 <li><strong>Early Return on Length:</strong> Different lengths means not anagrams - check this first!</li>
-                <li><strong>ASCII Math:</strong> Remember 'a' is 97 in ASCII, so ord(char) - ord('a') maps to 0-25.</li>
               </ul>
             `
           },
@@ -611,13 +863,18 @@ class Solution:
               </div>
             `,
             method: "HASH MAP",
+            codeExplanation: "This code finds a pair of numbers in an array that add up to a specific target value. It uses a two-pass approach: first storing all values and their indices in a hash map, then checking for each number if its complement (target - number) exists in the map. The check ensures we don't use the same array element twice by comparing indices.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Matching Pairs Game:</strong> For each number, you're looking for its perfect match (complement) that sums to the target.</li>
+                <li><strong>Complement Finding:</strong> For each number, find its complement (target - number
+                mnemonicsContent: `
+              <ul>
+                <li><strong>Matching Pairs Game:</strong> For each number, you're looking for its perfect match (complement) that sums to the target.</li>
                 <li><strong>Complement Finding:</strong> For each number, find its complement (target - number).</li>
                 <li><strong>Two-Pass Approach:</strong> First store all numbers in a hash map, then look for complements.</li>
                 <li><strong>Key-Value Strategy:</strong> Store values as keys and indices as values for quick lookup.</li>
                 <li><strong>Same Index Check:</strong> Remember to check that you're not using the same array element twice.</li>
-                <li><strong>Think Hash Map:</strong> When you need to find pairs that sum to a target, hash maps are often the solution.</li>
               </ul>
             `
           },
@@ -678,13 +935,14 @@ class Solution:
               </div>
             `,
             method: "HASH TABLE",
+            codeExplanation: "This code groups strings that are anagrams of each other. For each string, it creates a 'fingerprint' by counting the frequency of each character (using a 26-element array for a-z). It uses this fingerprint (converted to a tuple to make it hashable) as a key in a dictionary, with the values being lists of strings that share the same fingerprint. The defaultdict ensures new keys automatically create an empty list.",
             mnemonicsContent: `
               <ul>
+                <li><strong>DNA Fingerprinting:</strong> Each word gets a unique 'fingerprint' based on its character counts, and words with matching fingerprints are grouped together.</li>
                 <li><strong>Anagram Identifier:</strong> Character counts uniquely identify anagrams.</li>
                 <li><strong>Frequency Fingerprint:</strong> Use a 26-element array as a "fingerprint" for each word.</li>
                 <li><strong>Tuple as Key:</strong> Lists aren't hashable, so convert to tuple for dictionary keys.</li>
                 <li><strong>Group by Key:</strong> Words with identical character counts get grouped together.</li>
-                <li><strong>Default Collections:</strong> defaultdict(list) automatically creates empty lists for new keys.</li>
               </ul>
             `
           },
@@ -751,13 +1009,14 @@ class Solution:
               </div>
             `,
             method: "BUCKET SORT",
+            codeExplanation: "This code finds the k most frequent elements in an array. First, it counts the frequency of each number using a hash map. Then, it uses a bucket sort approach by creating an array of lists where the index represents frequency. Each number is placed in its corresponding frequency bucket. Finally, it collects the numbers starting from the highest frequency bucket until it has k elements.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Popularity Contest:</strong> Think of it like sorting celebrities by their number of followers, from most to least popular.</li>
                 <li><strong>Count First:</strong> Always start by counting frequencies with a hash map.</li>
                 <li><strong>Bucket Organization:</strong> Create buckets where the index is the frequency.</li>
                 <li><strong>Reverse Traversal:</strong> Start from highest frequency bucket to find top elements.</li>
                 <li><strong>Linear Time:</strong> Bucket sort achieves O(n) time without comparison-based sorting.</li>
-                <li><strong>Early Exit:</strong> Return as soon as you collect k elements.</li>
               </ul>
             `
           },
@@ -803,8 +1062,7 @@ Decode:
    d. Add the string to result list
    e. Move pointer i to the next position
 3. Return the result list</pre>
-              <div style="margin
-<div style="margin-top: 20px;">
+              <div style="margin-top: 20px;">
                 <span class="complexity time">Time: O(n)</span>
                 <span class="complexity space">Space: O(n)</span>
               </div>
@@ -841,13 +1099,14 @@ class Solution:
               </div>
             `,
             method: "LENGTH PREFIX",
+            codeExplanation: "This code implements a method to encode a list of strings into a single string and decode it back. The encoding prefixes each string with its length followed by a delimiter (#). For example, ['abc', 'def'] becomes '3#abc3#def'. The decoding process uses two pointers to parse this format: first finding the delimiter to extract the length, then using that length to extract the actual string.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Package Shipping Label:</strong> Think of each string as a package, and you're adding a shipping label with its exact size (length#) before sending it.</li>
                 <li><strong>Length + Delimiter:</strong> Encode using format "length#string".</li>
                 <li><strong>Two-Pointer Extraction:</strong> Use two pointers to parse the encoded string.</li>
                 <li><strong>Find-Parse-Extract:</strong> Find the delimiter, parse the length, extract the substring.</li>
                 <li><strong>Sequential Reading:</strong> Decode by reading one string at a time, moving forward.</li>
-                <li><strong>Think Network Protocols:</strong> This encoding is similar to how data is transmitted in networks.</li>
               </ul>
             `
           },
@@ -918,13 +1177,14 @@ class Solution:
               </div>
             `,
             method: "PREFIX & SUFFIX",
+            codeExplanation: "This elegant code calculates the product of all elements in an array except for the element at each position, without using division. It uses a two-pass approach: First, it builds prefix products (product of all elements to the left) for each position. Then it goes backward, multiplying each position by the running product of all elements to the right (suffix product). The final result contains prefix * suffix for each position.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Left Hand × Right Hand:</strong> Think of cupping your hands around each number - the left hand holds the product of everything to the left, the right hand holds the product of everything to the right.</li>
                 <li><strong>Two-Pass Approach:</strong> First calculate prefix products, then suffix products.</li>
                 <li><strong>Running Product:</strong> Maintain a running product as you iterate through the array.</li>
                 <li><strong>Output Array Reuse:</strong> Use the output array to store intermediate results (prefix products).</li>
                 <li><strong>Multiplication Splitting:</strong> The product of all except self = (product of all before) * (product of all after).</li>
-                <li><strong>No Division Needed:</strong> Solve without using division by splitting the calculation.</li>
               </ul>
             `
           },
@@ -1029,13 +1289,14 @@ class Solution:
               </div>
             `,
             method: "HASH SET",
+            codeExplanation: "This code validates a Sudoku board by checking the three rules: no duplicates in any row, any column, or any 3×3 box. It uses sets to track seen digits in each group. For the 3×3 boxes, it uses a clever mapping formula: (square//3)*3 + i for row, (square%3)*3 + j for column. Empty cells ('.') are skipped. If any duplicate is found, it returns False immediately.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Triple Validation Check:</strong> Think of it as three security guards checking the same person's ID in different ways - row check, column check, and box check.</li>
                 <li><strong>Three Separate Checks:</strong> Validate rows, columns, and 3x3 boxes independently.</li>
                 <li><strong>Set-Based Validation:</strong> Use hash sets to detect duplicates in each group.</li>
                 <li><strong>Box Indexing Formula:</strong> (square//3)*3 + i for row, (square%3)*3 + j for column.</li>
                 <li><strong>Empty Cell Skipping:</strong> Always skip cells containing "." before checking.</li>
-                <li><strong>Early Return:</strong> As soon as any invalid condition is found, return False.</li>
               </ul>
             `
           },
@@ -1100,13 +1361,14 @@ class Solution:
               </div>
             `,
             method: "HASH SET",
+            codeExplanation: "This code finds the length of the longest consecutive sequence in an array. It first converts the array to a set for O(1) lookups. Then it looks for potential sequence starts (numbers that don't have their predecessor in the set). For each potential start, it counts forward to find the sequence length. This approach is clever because it only does the counting work for actual sequence starts, avoiding duplicate work.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Chain Link Counting:</strong> Think of finding the head of each chain (sequence start) and then measuring how long each chain is by counting links one by one.</li>
                 <li><strong>Find Sequence Starts:</strong> Only check numbers that could be the start of a sequence.</li>
                 <li><strong>Efficient Lookups:</strong> Use a hash set for O(1) membership tests.</li>
                 <li><strong>Linear Scanning:</strong> Once a start is found, iterate forward to find sequence length.</li>
                 <li><strong>Avoid Duplicate Work:</strong> Skip numbers that can't be sequence starts.</li>
-                <li><strong>Track Max Length:</strong> Keep track of the longest sequence found so far.</li>
               </ul>
             `
           },
@@ -1181,13 +1443,14 @@ class Solution:
               </div>
             `,
             method: "TWO POINTERS",
+            codeExplanation: "This code checks if a string is a palindrome after removing non-alphanumeric characters and ignoring case. It uses a two-pointer approach: one pointer starts at the beginning, the other at the end. Both pointers move inward, skipping non-alphanumeric characters and comparing the valid characters. If any comparison fails, the string is not a palindrome. The helper function isAlphaNum determines if a character is a letter or digit using ASCII values.",
             mnemonicsContent: `
               <ul>
+                <li><strong>Mirror Reading:</strong> Imagine two people starting at opposite ends of a sentence, reading toward each other, skipping punctuation, and comparing what they read.</li>
                 <li><strong>Skip and Compare:</strong> Skip irrelevant characters, compare valid ones.</li>
                 <li><strong>Outside-In Approach:</strong> Check from both ends moving inward.</li>
                 <li><strong>Case Insensitivity:</strong> Convert to lowercase before comparing.</li>
                 <li><strong>In-place Checking:</strong> No need for extra string - check the original directly.</li>
-                <li><strong>Helper Function:</strong> Create a separate function for character validation to keep code clean.</li>
               </ul>
             `
           }
@@ -1198,13 +1461,193 @@ class Solution:
     </script>
     
     <script>
+        // Score tracking system
+        const ScoreTracker = {
+          // Initialize the score tracking system
+          init: function() {
+            // Initialize if no score data exists
+            if (!localStorage.getItem('leetcodeScores')) {
+              this.resetScores();
+            }
+            
+            // Check if we need to reset weekly scores (new week)
+            this.checkWeeklyReset();
+            
+            // Display current score
+            this.updateScoreDisplay();
+          },
+          
+          // Add points to user's score
+          addPoints: function(points) {
+            const scores = this.getScores();
+            scores.weekly += points;
+            scores.allTime += points;
+            scores.lastUpdated = new Date().getTime();
+            
+            // Save updated scores
+            localStorage.setItem('leetcodeScores', JSON.stringify(scores));
+            
+            // Update the display
+            this.updateScoreDisplay();
+            
+            // Show animation for points gained
+            this.showPointsAnimation(points);
+          },
+          
+          // Get current scores
+          getScores: function() {
+            return JSON.parse(localStorage.getItem('leetcodeScores'));
+          },
+          
+          // Reset all score data
+          resetScores: function() {
+            const scoreData = {
+              weekly: 0,
+              allTime: 0,
+              weekStartDate: this.getStartOfWeek(),
+              lastUpdated: new Date().getTime()
+            };
+            localStorage.setItem('leetcodeScores', JSON.stringify(scoreData));
+          },
+          
+          // Reset just the weekly score
+          resetWeeklyScore: function() {
+            const scores = this.getScores();
+            scores.weekly = 0;
+            scores.weekStartDate = this.getStartOfWeek();
+            localStorage.setItem('leetcodeScores', JSON.stringify(scores));
+          },
+          
+          // Check if we need to reset weekly scores
+          checkWeeklyReset: function() {
+            const scores = this.getScores();
+            const currentWeekStart = this.getStartOfWeek();
+            
+            // If we're in a new week, reset weekly score
+            if (scores.weekStartDate < currentWeekStart) {
+              this.resetWeeklyScore();
+            }
+          },
+          
+          // Get timestamp for start of current week (Sunday midnight)
+          getStartOfWeek: function() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0 = Sunday
+            const diff = now.getDate() - dayOfWeek;
+            const startOfWeek = new Date(now.setDate(diff));
+            startOfWeek.setHours(0, 0, 0, 0);
+            return startOfWeek.getTime();
+          },
+          
+          // Update the score display in the UI
+          updateScoreDisplay: function() {
+            const scores = this.getScores();
+            const scoreDisplay = document.getElementById('score-display');
+            
+            if (scoreDisplay) {
+              scoreDisplay.textContent = `Weekly Score: ${scores.weekly}`;
+              
+              // Add visual cue for high scores
+              if (scores.weekly > 50) {
+                scoreDisplay.classList.add('high-score');
+              } else {
+                scoreDisplay.classList.remove('high-score');
+              }
+            }
+          },
+          
+          // Show animation when points are earned
+          showPointsAnimation: function(points) {
+            // Create animation element
+            const animation = document.createElement('div');
+            animation.className = 'points-animation';
+            animation.textContent = `+${points}`;
+            
+            // Add to the DOM
+            document.body.appendChild(animation);
+            
+            // Trigger animation and remove after it completes
+            setTimeout(() => {
+              animation.classList.add('animate');
+              setTimeout(() => {
+                document.body.removeChild(animation);
+              }, 1000);
+            }, 10);
+          }
+        };
+
+        // Add URL parameter handling to load specific cards
+        function getCardFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cardId = urlParams.get('card');
+            if (cardId) {
+                // Find the card index by ID
+                for (let i = 0; i < cardsData.length; i++) {
+                    if (cardsData[i].id.toString() === cardId) {
+                        return i;
+                    }
+                }
+            }
+            return 0; // Default to first card if not found
+        }
+
+        // Share button functionality
+        function setupShareButton() {
+            const shareButton = document.getElementById('share-button');
+            if (!shareButton) return;
+            
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'share-tooltip';
+            tooltip.innerHTML = `
+                <p>Share this card:</p>
+                <input type="text" id="share-url" readonly style="width: 100%; margin-top: 5px;">
+                <button class="copy-button" id="copy-button">Copy Link</button>
+            `;
+            shareButton.appendChild(tooltip);
+            
+            // Toggle tooltip on share button click
+            shareButton.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card flip
+                tooltip.classList.toggle('active');
+                
+                if (tooltip.classList.contains('active')) {
+                    // Generate share URL with current card ID
+                    const currentCard = cardsData[currentCardIndex];
+                    const shareUrl = `${window.location.origin}${window.location.pathname}?card=${currentCard.id}`;
+                    document.getElementById('share-url').value = shareUrl;
+                }
+            });
+            
+            // Copy link button functionality
+            document.getElementById('copy-button').addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent card flip
+                const shareUrl = document.getElementById('share-url');
+                shareUrl.select();
+                document.execCommand('copy');
+                
+                // Show feedback
+                this.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.textContent = 'Copy Link';
+                    tooltip.classList.remove('active');
+                }, 1500);
+            });
+            
+            // Hide tooltip when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!shareButton.contains(e.target)) {
+                    tooltip.classList.remove('active');
+                }
+            });
+        }
+        
         // Global variable to track current card
         let currentCardIndex = 0;
         
         // Function to update the card content
         function updateCardContent() {
             console.log("Updating card to index:", currentCardIndex);
-            console.log("Total cards:", cardsData.length);
             
             // Make sure cardsData is available
             if (!cardsData || !cardsData.length) {
@@ -1224,9 +1667,21 @@ class Solution:
             document.getElementById('blueprint').innerHTML = card.blueprintContent || "Blueprint content missing";
             document.getElementById('code').innerHTML = card.codeContent || "Code content missing";
             
-            // Update back side
+            // Update back side with explanation and solution code
             document.getElementById('method-badge').textContent = card.method || "METHOD";
-            document.getElementById('mnemonics').innerHTML = card.mnemonicsContent || "Mnemonics content missing";
+            document.getElementById('code-explanation').innerHTML = card.codeExplanation || "No explanation available for this code.";
+            document.getElementById('mnemonics').innerHTML = card.mnemonicsContent || "No memory aids available.";
+            
+            // Extract the actual code from the codeContent HTML
+            let codeBlock = document.createElement('div');
+            codeBlock.innerHTML = card.codeContent;
+            
+            // Find the <pre> tag containing the actual code
+            let preElement = codeBlock.querySelector('pre');
+            let actualCode = preElement ? preElement.textContent : "Code not available";
+            
+            // Update the solution code on the back side
+            document.getElementById('solution-code').textContent = actualCode;
             
             // Update navigation
             document.getElementById('current-card').textContent = currentCardIndex + 1;
@@ -1239,8 +1694,10 @@ class Solution:
         
         // Card flip functionality
         document.querySelector('.flashcard').addEventListener('click', function(e) {
-            // Don't flip if clicking on tabs
-            if (!e.target.classList.contains('tab')) {
+            // Don't flip if clicking on tabs or share button
+            if (!e.target.classList.contains('tab') && 
+                !e.target.closest('#share-button') && 
+                !e.target.closest('#answer-button')) {
                 this.classList.toggle('is-flipped');
             }
         });
@@ -1305,20 +1762,53 @@ class Solution:
             });
         });
         
-        // Initialize the app as soon as possible
+        // Answer button for quiz mode
+        document.getElementById('answer-button').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent card flip
+            
+            // Award points
+            ScoreTracker.addPoints(10);
+            
+            // Provide feedback
+            this.textContent = "Great job! +10 points";
+            this.disabled = true;
+            
+            setTimeout(() => {
+                this.textContent = "I Know The Answer (+10 points)";
+                this.disabled = false;
+            }, 2000);
+        });
+        
+        // Initialize when the document is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM loaded, initializing cards");
+            console.log("DOM loaded, initializing app");
+            
+            // Set current card index based on URL parameter
+            currentCardIndex = getCardFromURL();
+            
+            // Initialize score tracking
+            ScoreTracker.init();
+            
+            // Update card content and setup share functionality
             updateCardContent();
+            setupShareButton();
         });
 
-        // Also try to initialize immediately
+        // Also try to initialize immediately in case DOMContentLoaded already fired
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             console.log("Document already loaded, initializing now");
-            setTimeout(updateCardContent, 100);
+            setTimeout(function() {
+                // Set current card index based on URL parameter
+                currentCardIndex = getCardFromURL();
+                
+                // Initialize score tracking
+                ScoreTracker.init();
+                
+                // Update card content and setup share functionality
+                updateCardContent();
+                setupShareButton();
+            }, 100);
         }
-
-        // Initialize immediately regardless of document state
-        updateCardContent();
     </script>
 </body>
 </html>
